@@ -1,0 +1,2027 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberAudit Pro - Comprehensive Security Assessment Platform</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <link href="https://cdn.tailwindcss.com" rel="stylesheet">
+    
+    <!-- Google Fonts - JetBrains Mono -->
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    
+    <style>
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --border-color: #30363d;
+            --accent-green: #39ff14;
+            --accent-cyan: #00e5ff;
+            --critical-red: #ff4444;
+            --high-orange: #ff8c00;
+            --medium-yellow: #ffd700;
+            --low-blue: #4a90e2;
+            --info-grey: #8b949e;
+        }
+        
+        * {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        body {
+            background-color: var(--bg-primary);
+            color: #e6edf3;
+        }
+        
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease-in;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .tab-btn {
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            color: #8b949e;
+            padding: 12px 20px;
+            cursor: pointer;
+        }
+        
+        .tab-btn.active {
+            color: var(--accent-cyan);
+            border-bottom-color: var(--accent-cyan);
+        }
+        
+        .tab-btn:hover {
+            color: var(--accent-cyan);
+        }
+        
+        .card {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+        }
+        
+        .input-field {
+            background-color: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            color: #e6edf3;
+            padding: 10px 12px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        
+        .input-field:focus {
+            outline: none;
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 0 3px rgba(0, 229, 255, 0.1);
+        }
+        
+        .btn-primary {
+            background-color: var(--accent-cyan);
+            color: var(--bg-primary);
+            padding: 10px 20px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background-color: #00d4ff;
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.5);
+        }
+        
+        .btn-secondary {
+            background-color: transparent;
+            border: 1px solid var(--accent-cyan);
+            color: var(--accent-cyan);
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-secondary:hover {
+            background-color: rgba(0, 229, 255, 0.1);
+        }
+        
+        .btn-danger {
+            background-color: var(--critical-red);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-danger:hover {
+            background-color: #ff2222;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .badge-critical {
+            background-color: rgba(255, 68, 68, 0.2);
+            color: var(--critical-red);
+            border: 1px solid var(--critical-red);
+        }
+        
+        .badge-high {
+            background-color: rgba(255, 140, 0, 0.2);
+            color: var(--high-orange);
+            border: 1px solid var(--high-orange);
+        }
+        
+        .badge-medium {
+            background-color: rgba(255, 215, 0, 0.2);
+            color: var(--medium-yellow);
+            border: 1px solid var(--medium-yellow);
+        }
+        
+        .badge-low {
+            background-color: rgba(74, 144, 226, 0.2);
+            color: var(--low-blue);
+            border: 1px solid var(--low-blue);
+        }
+        
+        .badge-info {
+            background-color: rgba(139, 148, 158, 0.2);
+            color: var(--info-grey);
+            border: 1px solid var(--info-grey);
+        }
+        
+        .badge-pass {
+            background-color: rgba(57, 255, 20, 0.2);
+            color: var(--accent-green);
+            border: 1px solid var(--accent-green);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+        }
+        
+        th {
+            background-color: var(--bg-primary);
+            border-bottom: 2px solid var(--border-color);
+            padding: 12px;
+            text-align: left;
+            color: var(--accent-cyan);
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        td {
+            border-bottom: 1px solid var(--border-color);
+            padding: 12px;
+        }
+        
+        tr:nth-child(even) {
+            background-color: rgba(22, 27, 34, 0.5);
+        }
+        
+        tr:hover {
+            background-color: rgba(0, 229, 255, 0.05);
+        }
+        
+        .summary-card {
+            background: linear-gradient(135deg, rgba(0, 229, 255, 0.1) 0%, rgba(57, 255, 20, 0.05) 100%);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .summary-card h3 {
+            color: var(--info-grey);
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        
+        .summary-card .value {
+            color: var(--accent-cyan);
+            font-size: 32px;
+            font-weight: 700;
+        }
+        
+        .threat-level {
+            display: inline-block;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 16px;
+        }
+        
+        .threat-level.low {
+            background-color: rgba(74, 144, 226, 0.2);
+            color: var(--low-blue);
+            border: 2px solid var(--low-blue);
+        }
+        
+        .threat-level.medium {
+            background-color: rgba(255, 215, 0, 0.2);
+            color: var(--medium-yellow);
+            border: 2px solid var(--medium-yellow);
+        }
+        
+        .threat-level.high {
+            background-color: rgba(255, 140, 0, 0.2);
+            color: var(--high-orange);
+            border: 2px solid var(--high-orange);
+        }
+        
+        .threat-level.critical {
+            background-color: rgba(255, 68, 68, 0.2);
+            color: var(--critical-red);
+            border: 2px solid var(--critical-red);
+        }
+        
+        .terminal-output {
+            background-color: #000;
+            border: 2px solid var(--accent-green);
+            border-radius: 6px;
+            padding: 16px;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--accent-green);
+            font-size: 13px;
+            line-height: 1.6;
+            overflow-x: auto;
+            margin-top: 12px;
+        }
+        
+        .terminal-line {
+            margin: 4px 0;
+        }
+        
+        .terminal-prompt {
+            color: var(--accent-cyan);
+        }
+        
+        .stepper {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+            position: relative;
+        }
+        
+        .stepper::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: var(--border-color);
+            z-index: 0;
+        }
+        
+        .step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .step-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 8px;
+            font-weight: 700;
+            color: var(--info-grey);
+            transition: all 0.3s ease;
+        }
+        
+        .step.active .step-circle {
+            background-color: var(--accent-cyan);
+            border-color: var(--accent-cyan);
+            color: var(--bg-primary);
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.5);
+        }
+        
+        .step.complete .step-circle {
+            background-color: var(--accent-green);
+            border-color: var(--accent-green);
+            color: var(--bg-primary);
+        }
+        
+        .step-label {
+            font-size: 12px;
+            color: var(--info-grey);
+            margin-top: 8px;
+        }
+        
+        .step.active .step-label {
+            color: var(--accent-cyan);
+            font-weight: 600;
+        }
+        
+        .step.complete .step-label {
+            color: var(--accent-green);
+            font-weight: 600;
+        }
+        
+        .risk-matrix {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            margin: 20px 0;
+        }
+        
+        .risk-cell {
+            aspect-ratio: 1;
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .risk-cell:hover {
+            transform: scale(1.05);
+        }
+        
+        .risk-1-1 { background-color: rgba(74, 144, 226, 0.2); border-color: var(--low-blue); }
+        .risk-1-2, .risk-2-1 { background-color: rgba(74, 144, 226, 0.2); border-color: var(--low-blue); }
+        .risk-1-3, .risk-2-2, .risk-3-1 { background-color: rgba(255, 215, 0, 0.2); border-color: var(--medium-yellow); }
+        .risk-1-4, .risk-2-3, .risk-3-2, .risk-4-1 { background-color: rgba(255, 140, 0, 0.2); border-color: var(--high-orange); }
+        .risk-1-5, .risk-2-4, .risk-3-3, .risk-4-2, .risk-5-1 { background-color: rgba(255, 140, 0, 0.2); border-color: var(--high-orange); }
+        .risk-2-5, .risk-3-4, .risk-4-3, .risk-5-2 { background-color: rgba(255, 140, 0, 0.2); border-color: var(--high-orange); }
+        .risk-3-5, .risk-4-4, .risk-5-3 { background-color: rgba(255, 68, 68, 0.2); border-color: var(--critical-red); }
+        .risk-4-5, .risk-5-4, .risk-5-5 { background-color: rgba(255, 68, 68, 0.2); border-color: var(--critical-red); }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 24px;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            width: 90%;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 12px;
+        }
+        
+        .modal-header h2 {
+            color: var(--accent-cyan);
+            font-size: 20px;
+            margin: 0;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--info-grey);
+            font-size: 24px;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        
+        .close-btn:hover {
+            color: var(--accent-cyan);
+        }
+        
+        .report-preview {
+            background-color: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 24px;
+            margin-top: 20px;
+            line-height: 1.8;
+        }
+        
+        .report-section {
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .report-section:last-child {
+            border-bottom: none;
+        }
+        
+        .report-section h3 {
+            color: var(--accent-cyan);
+            font-size: 18px;
+            margin-bottom: 12px;
+        }
+        
+        .report-section h4 {
+            color: var(--accent-green);
+            font-size: 14px;
+            margin-top: 12px;
+            margin-bottom: 8px;
+        }
+        
+        .compliance-bar {
+            width: 100%;
+            height: 24px;
+            background-color: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 12px 0;
+        }
+        
+        .compliance-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-green) 0%, var(--accent-cyan) 100%);
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--bg-primary);
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin: 20px 0;
+        }
+        
+        @media (max-width: 768px) {
+            .tab-btn {
+                padding: 10px 12px;
+                font-size: 12px;
+            }
+            
+            .summary-card .value {
+                font-size: 24px;
+            }
+            
+            .risk-matrix {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .modal-content {
+                width: 95%;
+                padding: 16px;
+            }
+        }
+        
+        @media print {
+            body {
+                background-color: white;
+                color: black;
+            }
+            
+            .tab-bar, .btn-primary, .btn-secondary, .btn-danger {
+                display: none;
+            }
+            
+            .report-preview {
+                border: none;
+                padding: 0;
+                background-color: white;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-950">
+    <!-- Navigation Bar -->
+    <nav class="sticky top-0 z-50 bg-gray-900 border-b border-gray-700 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <span style="font-size: 24px;">🛡️</span>
+                <h1 style="color: var(--accent-cyan); font-size: 24px; font-weight: 700; margin: 0;">CyberAudit Pro</h1>
+            </div>
+            <div style="color: var(--info-grey); font-size: 12px;">
+                Comprehensive Security Assessment Platform
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Tab Navigation -->
+    <div class="tab-bar border-b border-gray-700 bg-gray-900 sticky top-16 z-40">
+        <div class="max-w-7xl mx-auto px-4 flex overflow-x-auto">
+            <button class="tab-btn active" onclick="switchTab('dashboard')">📊 Dashboard</button>
+            <button class="tab-btn" onclick="switchTab('network')">🌐 Network Security</button>
+            <button class="tab-btn" onclick="switchTab('pentest')">⚔️ Penetration Testing</button>
+            <button class="tab-btn" onclick="switchTab('compliance')">✅ Compliance</button>
+            <button class="tab-btn" onclick="switchTab('report')">📋 Report Generator</button>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 py-6">
+        
+        <!-- TAB 1: DASHBOARD -->
+        <div id="dashboard" class="tab-content active">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+                <div class="summary-card">
+                    <h3>Total Assets Scanned</h3>
+                    <div class="value" id="totalAssets">5</div>
+                </div>
+                <div class="summary-card">
+                    <h3>Critical Vulnerabilities</h3>
+                    <div class="value" id="criticalCount">1</div>
+                </div>
+                <div class="summary-card">
+                    <h3>High Severity</h3>
+                    <div class="value" id="highCount">2</div>
+                </div>
+                <div class="summary-card">
+                    <h3>Medium Severity</h3>
+                    <div class="value" id="mediumCount">3</div>
+                </div>
+                <div class="summary-card">
+                    <h3>Compliance Score</h3>
+                    <div class="value" id="complianceScore">72%</div>
+                </div>
+            </div>
+            
+            <div class="mb-6">
+                <div class="card">
+                    <h3 style="color: var(--accent-cyan); font-size: 18px; margin-bottom: 12px;">Overall Threat Level</h3>
+                    <div id="threatLevelBadge" class="threat-level high">HIGH</div>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                <div class="card">
+                    <h3 style="color: var(--accent-cyan); font-size: 18px; margin-bottom: 12px;">Vulnerability Breakdown</h3>
+                    <div class="chart-container">
+                        <canvas id="vulnerabilityChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3 style="color: var(--accent-cyan); font-size: 18px; margin-bottom: 12px;">Findings by Category</h3>
+                    <div class="chart-container">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mb-6">
+                <h3 style="color: var(--accent-cyan); font-size: 18px; margin-bottom: 12px;">Risk Score Trend (Last 6 Cycles)</h3>
+                <div class="chart-container">
+                    <canvas id="trendChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3 style="color: var(--accent-cyan); font-size: 18px; margin-bottom: 12px;">Recent Findings</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Asset</th>
+                            <th>Vulnerability</th>
+                            <th>Severity</th>
+                            <th>Status</th>
+                            <th>Date Found</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recentFindingsTable">
+                        <tr>
+                            <td>#VUL-001</td>
+                            <td>192.168.1.10</td>
+                            <td>Unpatched RDP Service</td>
+                            <td><span class="badge badge-critical">CRITICAL</span></td>
+                            <td><span class="badge badge-info">Open</span></td>
+                            <td>2024-05-20</td>
+                        </tr>
+                        <tr>
+                            <td>#VUL-002</td>
+                            <td>web-server-01</td>
+                            <td>SQL Injection Vulnerability</td>
+                            <td><span class="badge badge-high">HIGH</span></td>
+                            <td><span class="badge badge-info">In Review</span></td>
+                            <td>2024-05-19</td>
+                        </tr>
+                        <tr>
+                            <td>#VUL-003</td>
+                            <td>fw-core-01</td>
+                            <td>Weak Firewall Rules</td>
+                            <td><span class="badge badge-medium">MEDIUM</span></td>
+                            <td><span class="badge badge-pass">Remediated</span></td>
+                            <td>2024-05-18</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- TAB 2: NETWORK SECURITY ASSESSMENT -->
+        <div id="network" class="tab-content">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                <!-- Asset Inventory Form -->
+                <div class="card">
+                    <h3 style="color: var(--accent-cyan); font-size: 18px; margin-bottom: 16px;">Add Network Asset</h3>
+                    <div class="space-y-4">
+                        <input type="text" id="assetIP" class="input-field w-full" placeholder="IP Address (e.g., 192.168.1.10)">
+                        <input type="text" id="assetHostname" class="input-field w-full" placeholder="Hostname (e.g., server-01)">
+                        <input type="text" id="assetOS" class="input-field w-full" placeholder="Operating System (e.g., Windows Server 2019)">
+                        <select id="assetType" class="input-field w-full">
+                            <option value="">Select Asset Type</option>
+                            <option value="Router">Router</option>
+                            <option value="Switch">Switch</option>
+                            <option value="Server">Server</option>
+                            <option value="Endpoint">Endpoint</option>
+                            <option value="Firewall">Firewall</option>
+                        </select>
+                        <select id="assetCriticality" class="input-field w-full">
+                            <option value="">Select Criticality (1=Low, 5=Critical)</option>
+                            <option value="1">1 - Low</option>
+                            <option value="2">2 - Medium</option>
+                            <option value="3">3 - High</option>
+                            <option value="4">4 - Critical</option>
+                            <option value="5">5 - Mission Critical</option>
+                        </select>
+                        <button class="btn-primary w-full" onclick="addNetworkAsset()">Add Asset</button>
+                    </div>
+                </div>
+                
+                <!-- Port Scan Simulator -->
+                <div class="card">
+                    <h3 style="color: var(--accent-cyan); font-size: 18px; margin-bottom: 16px;">Port Scan Simulator</h3>
+                    <div class="space-y-4">
+                        <input type="text" id="scanIP" class="input-field w-full" placeholder="Target IP Address">
+                        <button class="btn-primary w-full" onclick="simulatePortScan()">Scan Ports</button>
+                        <div id="portScanOutput" class="terminal-output" style="display: none; min-height: 200px;"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Asset Inventory Table -->
+            <div class="card mb-6">
+                <h3 style="color: var(--accent-cyan); font-size: 18px; margin-bottom: 12px;">Network Asset Inventory</h3>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>IP Address</th>
+                                <th>Hostname</th>
+                                <th>OS</th>
+                                <th>Asset Type</th>
+                                <th>Criticality</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="assetTable">
+                            <tr>
+                                <td>192.168.1.10</td>
+                                <td>fw-core-01</td>
+                                <td>Palo Alto OS</td>
+                                <td>Firewall</td>
+                                <td><span class="badge badge-critical">5</span></td>
+                                <td><button class="btn-danger" onclick="deleteAsset(0)">Delete</button></td>
+                            </tr>
+                            <tr>
+                                <td>192.168.1.20</td>
+                                <td>web-server-01</td>
+                                <td>Ubuntu 22.04 LTS</td>
+                                <td>Server</td>
+                                <td><span class="badge badge-high">4</span></td>
+                                <td><button class="btn-danger" onclick="deleteAsset(1)">Delete</button></td>
+                            </tr>
+                            <tr>
+                                <td>192.168.1.30</td>
+                                <td>db-primary-01</td>
+                                <td>Windows Server 2019</td>
+                                <td>Server</td>
+                                <td><span class="badge badge-high">4</span></td>
+                                <td><button class="btn-danger" onclick="deleteAsset(2)">Delete</button></td>
+                            </tr>
+                            <tr>
+                                <td>192.168.1.1</td>
+                                <td>core-switch-01</td>
+                                <td>Cisco IOS</td>
+                                <td>Switch</td>
+                                <td><span class="badge badge-high">3</span></td>
+                                <td><button class="btn-danger" onclick="deleteAsset(3)">Delete</button></td>
+                            </tr>
+                            <tr>
+                                <td>192.168.2.50</td>
+                                <td>workstation-01</td>
+                                <td>Windows 10</td>
+                                <td>Endpoint</td>
+                                <td><span class="badge badge-medium">2</span></td>
+                                <td><button class="btn-danger" onclick="deleteAsset(4)">Delete</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Network Vulnerability Checklist -->
+            <div class="card">
+                <h3 style="color: var(--accent-cyan); font-size: 18px; margin-bottom: 16px;">Network Vulnerability Checklist</h3>
+                
+                <div style="margin-bottom: 24px;">
+                    <h4 style="color: var(--accent-green); font-size: 16px; margin-bottom: 12px;">Firewall Rules Review</h4>
+                    <div id="firewallChecklist" class="space-y-3">
+                        <div class="flex items-start gap-3">
+                            <input type="checkbox" id="fw1" class="mt-1" onchange="updateNetworkScore()">
+                            <div class="flex-1">
+                                <label for="fw1" style="cursor: pointer; color: var(--accent-cyan);">Inbound rules explicitly deny by default</label>
+                                <textarea class="input-field w-full mt-1" placeholder="Notes..." style="font-size: 12px; height: 60px;"></textarea>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <input type="checkbox" id="fw2" class="mt-1" onchange="updateNetworkScore()">
+                            <div class="flex-1">
+                                <label for="fw2" style="cursor: pointer; color: var(--accent-cyan);">Outbound rules restrict to business requirements</label>
+                                <textarea class="input-field w-full mt-1" placeholder="Notes..." style="font-size: 12px; height: 60px;"></textarea>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <input type="checkbox" id="fw3" class="mt-1" onchange="updateNetworkScore()">
+                            <div class="flex-1">
+                                <label for="fw3" style="cursor: pointer; color: var(--accent-cyan);">Firewall rules documented and reviewed quarterly</label>
+                                <textarea class="input-field w-full mt-1" placeholder="Notes..." style="font-size: 12px; height: 60px;"></textarea>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <input type="checkbox" id="fw4" class="mt-1" onchange="updateNetworkScore()">
+                            <div class="flex-1">
+                                <label for="fw4" style="cursor: pointer; color: var(--accent-cyan);">Logging enabled for all firewall events</label>
+                                <textarea class="input-field w-full mt-1" placeholder="Notes..." style="font-size: 12px; height: 60px;"></textarea>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <input type="checkbox" id="fw5" class="mt-1" onchange="updateNetworkScore()">
+                            <div class="flex-1">
+                                <label for="fw5" style="cursor: pointer; color: var(--accent-cyan);">IDS/IPS signatures updated regularly</label>
+                                <textarea class="input-field w-full mt-1" placeholder="Notes..." style="font-size: 12px; height: 60px;"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 24px;">
+                    <h4 style="color: var(--accent-green); font-size: 16px; margin-bottom: 12px;">Network Segmentation</h4>
+                    <div id="segmentationChecklist" class="space-y-3">
+                        <div class="flex items-start gap-3">
+                            <input type="checkbox" id="seg1" class="mt-1" onchange="updateNetworkScore()">
+                            <div class="flex-1">
+                                <label for="seg1" style="cursor: pointer; color: var(--accent-cyan);">DMZ properly isolated from internal network</label>
+                                <textarea class="input-field w-full mt-1" placeholder="Notes..." style="font-size: 12px; height: 60px;"></textarea>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <input type="checkbox" id="seg2" class="mt-1" onchange="updateNetworkScore()">
+                            <div class="flex-1">
+                                <label for="seg2" style="cursor: pointer; color: var(--accent-cyan);">VLANs configured for critical systems</label>
+                                <textarea class="input-field w-full mt-1" placeholder="Notes..." style="font-size: 12px; height: 60px;"></textarea>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <input type="checkbox" id="seg3" class="mt-1" onchange="updateNetworkScore()">
+                            <div class="flex-1">
+                                <label for="seg3" style="cursor: pointer; color: var(--accent-cyan);">Access control lists enforce segmentation</label>
+                                <textarea class="input-field w-full mt-1" placeholder="Notes..." style="font-size: 12px; height: 60px;"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 24px;">
+                    <h4 style="color: var(--accent-green); font-size: 16px; margin-bottom: 12px;">Wireless Security</h4>
+                    <div id="wirelessChecklist" class="space-y-3">
+                        <div class="flex items-start gap-3">
+                            <input type="checkbox" id="wir1" class="mt-1" onchange="updateNetworkScore()">
+                            <div class="flex-1">
+                                <label for="wir1" style="cursor: pointer; color: var(--accent-cyan);">WPA3 encryption enabled on all access points</label>
+                                <textarea class="input-field w-full mt-1" placeholder="Notes..." style="font-size: 12px; height: 60px;"></textarea>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <input type="checkbox" id="wir2" class="mt-1" onchange="updateNetworkScore()">
+                            <div class="flex-1">
+                                <label for="wir2" style="cursor: pointer; color: var(--accent-cyan);">SSID broadcast disabled</label>
+                                <textarea class="input-field w-full mt-1" placeholder="Notes..." style="font-size: 12px; height: 60px;"></textarea>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <input type="checkbox" id="wir3" class="mt-1" onchange="updateNetworkScore()">
+                            <div class="flex-1">
+                                <label for="wir3" style="cursor: pointer; color: var(--accent-cyan);">Rogue AP detection enabled</label>
+                                <textarea class="input-field w-full mt-1" placeholder="Notes..." style="font-size: 12px; height: 60px;"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 24px;">
+                    <h4 style="color: var(--accent-green); font-size: 16px; margin-bottom: 12px;">DNS Security</h4>
+                    <div id="dnsChecklist" class="space-y-3">
+                        <div class="flex items-start gap-3">
+                            <input type="checkbox" id="dns1" class="mt-1" onchange="updateNetworkScore()">
+                            <div class="flex-1">
+                                <label for="dns1" style="cursor: pointer; color: var(--accent-cyan);">DNSSEC enabled</label>
+                                <textarea class="input-field w-full mt-1" placeholder="Notes..." style="font-size: 12px; height: 60px;"></textarea>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <input type="checkbox" id="dns2" class="mt-1" onchange="updateNetworkScore()">
+                            <div class="flex-1">
+                                <label for="dns2" style="cursor: pointer; color: var(--accent-cyan);">DNS filtering enabled for malware/phishing</label>
+                                <textarea class="input-field w-full mt-1" placeholder="Notes..." style="font-size: 12px; height: 60px;"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 24px;">
+                    <h4 style="color: var(--accent-green); font-size: 16px; margin-bottom: 12px;">VPN & Remote Access</h4>
+                    <div id="vpnChecklist" class="space-y-3">
+                        <div class="flex items-start gap-3">
+                            <input type="checkbox" id="vpn1" class="mt-1" onchange="updateNetworkScore()">
+                            <div class="flex-1">
+                                <label for="vpn1" style="cursor: pointer; color: var(--accent-cyan);">VPN uses strong encryption (AES-256)</label>
+                                <textarea class="input-field w-full mt-1" placeholder="Notes..." style="font-size: 12px; height: 60px;"></textarea>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <input type="checkbox" id="vpn2" class="mt-1" onchange="updateNetworkScore()">
+                            <div class="flex-1">
+                                <label for="vpn2" style="cursor: pointer; color: var(--accent-cyan);">Multi-factor authentication required for VPN access</label>
+                                <textarea class="input-field w-full mt-1" placeholder="Notes..." style="font-size: 12px; height: 60px;"></textarea>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <input type="checkbox" id="vpn3" class="mt-1" onchange="updateNetworkScore()">
+                            <div class="flex-1">
+                                <label for="vpn3" style="cursor: pointer; color: var(--accent-cyan);">VPN logs monitored for anomalies</label>
+                                <textarea class="input-field w-full mt-1" placeholder="Notes..." style="font-size: 12px; height: 60px;"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card" style="background-color: var(--bg-primary); margin-top: 20px;">
+                    <h4 style="color: var(--accent-cyan); font-size: 16px;">Network Security Score</h4>
+                    <div class="compliance-bar">
+                        <div class="compliance-bar-fill" id="networkScoreBar" style="width: 40%;">40%</div>
+                    </div>
+                    <p style="color: var(--info-grey); font-size: 12px; margin-top: 8px;">Based on completed checklist items</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- TAB 3: PENETRATION TESTING ANALYSIS -->
+        <div id="pentest" class="tab-content">
+            <!-- Engagement Metadata -->
+            <div class="card mb-6">
+                <h3 style="color: var(--accent-cyan); font-size: 18px; margin-bottom: 16px;">Engagement Metadata</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <input type="text" id="clientName" class="input-field" placeholder="Client Name" value="AcmeCorp Financial Services">
+                    <input type="text" id="testerName" class="input-field" placeholder="Tester Name" value="Security Team">
+                    <input type="date" id="engagementStart" class="input-field" value="2024-05-01">
+                    <input type="date" id="engagementEnd" class="input-field" value="2024-05-31">
+                    <select id="engagementType" class="input-field">
+                        <option value="Black Box">Black Box</option>
+                        <option value="White Box" selected>White Box</option>
+                        <option value="Grey Box">Grey Box</option>
+                    </select>
+                </div>
+                <textarea id="engagementScope" class="input-field w-full mt-4" placeholder="Engagement Scope" style="height: 100px;">Comprehensive security assessment of internal network infrastructure, web applications, and physical security controls. Focus on critical financial systems and data protection mechanisms.</textarea>
+            </div>
+            
+            <!-- Pentest Phase Tracker -->
+            <div class="card mb-6">
+                <h3 style="color: var(--accent-cyan); font-size: 18px; margin-bottom: 16px;">Pentest Phase Tracker</h3>
+                <div class="stepper">
+                    <div class="step complete">
+                        <div class="step-circle">✓</div>
+                        <div class="step-label">Reconnaissance</div>
+                    </div>
+                    <div class="step complete">
+                        <div class="step-circle">✓</div>
+                        <div class="step-label">Scanning & Enumeration</div>
+                    </div>
+                    <div class="step active">
+                        <div class="step-circle">3</div>
+                        <div class="step-label">Exploitation</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-circle">4</div>
+                        <div class="step-label">Post-Exploitation</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-circle">5</div>
+                        <div class="step-label">Reporting</div>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mt-8">
+                    <div>
+                        <label style="color: var(--accent-cyan); font-size: 12px;">Phase 1: Reconnaissance</label>
+                        <select class="input-field w-full mt-2">
+                            <option value="complete">Complete</option>
+                            <option value="in-progress">In Progress</option>
+                            <option value="not-started">Not Started</option>
+                        </select>
+                        <textarea class="input-field w-full mt-2" placeholder="Notes..." style="font-size: 12px; height: 80px;">Initial reconnaissance completed. Identified 23 network devices and 12 web applications.</textarea>
+                    </div>
+                    <div>
+                        <label style="color: var(--accent-cyan); font-size: 12px;">Phase 2: Scanning</label>
+                        <select class="input-field w-full mt-2">
+                            <option value="complete">Complete</option>
+                            <option value="in-progress">In Progress</option>
+                            <option value="not-started">Not Started</option>
+                        </select>
+                        <textarea class="input-field w-full mt-2" placeholder="Notes..." style="font-size: 12px; height: 80px;">Port scanning and service enumeration completed. 47 open ports identified.</textarea>
+                    </div>
+                    <div>
+                        <label style="color: var(--accent-cyan); font-size: 12px;">Phase 3: Exploitation</label>
+                        <select class="input-field w-full mt-2">
+                            <option value="not-started">Not Started</option>
+                            <option value="in-progress" selected>In Progress</option>
+                            <option value="complete">Complete</option>
+                        </select>
+                        <textarea class="input-field w-full mt-2" placeholder="Notes..." style="font-size: 12px; height: 80px;">Currently exploiting identified vulnerabilities. 3 successful compromises achieved.</textarea>
+                    </div>
+                    <div>
+                        <label style="color: var(--accent-cyan); font-size: 12px;">Phase 4: Post-Exploitation</label>
+                        <select class="input-field w-full mt-2">
+                            <option value="not-started" selected>Not Started</option>
+                            <option value="in-progress">In Progress</option>
+                            <option value="complete">Complete</option>
+                        </select>
+                        <textarea class="input-field w-full mt-2" placeholder="Notes..." style="font-size: 12px; height: 80px;">Pending exploitation phase completion.</textarea>
+                    </div>
+                    <div>
+                        <label style="color: var(--accent-cyan); font-size: 12px;">Phase 5: Reporting</label>
+                        <select class="input-field w-full mt-2">
+                            <option value="not-started" selected>Not Started</option>
+                            <option value="in-progress">In Progress</option>
+                            <option value="complete">Complete</option>
+                        </select>
+                        <textarea class="input-field w-full mt-2" placeholder="Notes..." style="font-size: 12px; height: 80px;">Pending completion of all phases.</textarea>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Finding Log Form -->
+            <div class="card mb-6">
+                <h3 style="color: var(--accent-cyan); font-size: 18px; margin-bottom: 16px;">Add Pentest Finding</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <input type="text" id="findingTitle" class="input-field" placeholder="Finding Title">
+                    <input type="text" id="findingHost" class="input-field" placeholder="Affected Host/URL">
+                    <input type="text" id="cveID" class="input-field" placeholder="CVE ID (optional)">
+                    <select id="attackVector" class="input-field">
+                        <option value="">Select Attack Vector</option>
+                        <option value="Network">Network</option>
+                        <option value="Adjacent">Adjacent</option>
+                        <option value="Local">Local</option>
+                        <option value="Physical">Physical</option>
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label style="color: var(--accent-cyan); font-size: 12px;">CVSS Score: <span id="cvssValue">5.0</span></label>
+                    <input type="range" id="cvssScore" class="w-full mt-2" min="0" max="10" step="0.1" value="5.0" onchange="updateCVSSSeverity()">
+                </div>
+                <div class="mb-4">
+                    <label style="color: var(--accent-cyan); font-size: 12px;">Severity: <span id="severityBadge" class="badge badge-medium">MEDIUM</span></label>
+                </div>
+                <textarea id="findingDescription" class="input-field w-full mb-4" placeholder="Description" style="height: 100px;"></textarea>
+                <textarea id="findingPOC" class="input-field w-full mb-4" placeholder="Proof of Concept" style="height: 100px;"></textarea>
+                <textarea id="findingRemediation" class="input-field w-full mb-4" placeholder="Remediation Recommendation" style="height: 100px;"></textarea>
+                <button class="btn-primary" onclick="addPentestFinding()">Add Finding</button>
+            </div>
+            
+            <!-- CVSS Score Distribution Chart -->
+            <div class="card mb-6">
+                <h3 style="color: var(--accent-cyan); font-size: 18px; margin-bottom: 12px;">CVSS Score Distribution</h3>
+                <div class="chart-container">
+                    <canvas id="cvssChart"></canvas>
+                </div>
+            </div>
+            
+            <!-- Finding Table -->
+            <div class="card mb-6">
+                <h3 style="color: var(--accent-cyan); font-size: 18px; margin-bottom: 12px;">Pentest Findings Log</h3>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Host/URL</th>
+                                <th>CVSS</th>
+                                <th>Severity</th>
+                                <th>Vector</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pentestFindingsTable">
+                            <tr>
+                                <td>Unpatched RDP Service</td>
+                                <td>192.168.1.10</td>
+                                <td>9.8</td>
+                                <td><span class="badge badge-critical">CRITICAL</span></td>
+                                <td>Network</td>
+                                <td><button class="btn-danger" onclick="deletePentestFinding(0)">Delete</button></td>
+                            </tr>
+                            <tr>
+                                <td>SQL Injection in Login Form</td>
+                                <td>app.acmecorp.local</td>
+                                <td>8.6</td>
+                                <td><span class="badge badge-high">HIGH</span></td>
+                                <td>Network</td>
+                                <td><button class="btn-danger" onclick="deletePentestFinding(1)">Delete</button></td>
+                            </tr>
+                            <tr>
+                                <td>Weak SSH Configuration</td>
+                                <td>web-server-01</td>
+                                <td>5.3</td>
+                                <td><span class="badge badge-medium">MEDIUM</span></td>
+                                <td>Network</td>
+                                <td><button class="btn-danger" onclick="deletePentestFinding(2)">Delete</button></td>
+                            </tr>
+                            <tr>
+                                <td>Default Credentials on Admin Panel</td>
+                                <td>fw-core-01</td>
+                                <td>2.1</td>
+                                <td><span class="badge badge-low">LOW</span></td>
+                                <td>Adjacent</td>
+                                <td><button class="btn-danger" onclick="deletePentestFinding(3)">Delete</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="card">
+                <button class="btn-primary" onclick="exportPentestReport()">📥 Export Findings Report</button>
+            </div>
+        </div>
+        
+        <!-- TAB 4: SECURITY CONTROLS & COMPLIANCE -->
+        <div id="compliance" class="tab-content">
+            <div class="card mb-6">
+                <h3 style="color: var(--accent-cyan); font-size: 18px; margin-bottom: 16px;">Select Compliance Framework</h3>
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+                    <button class="btn-primary" onclick="loadFramework('CIS')">CIS Controls v8</button>
+                    <button class="btn-secondary" onclick="loadFramework('NIST')">NIST CSF</button>
+                    <button class="btn-secondary" onclick="loadFramework('ISO')">ISO 27001</button>
+                    <button class="btn-secondary" onclick="loadFramework('PCI')">PCI-DSS</button>
+                    <button class="btn-secondary" onclick="loadFramework('HIPAA')">HIPAA</button>
+                </div>
+            </div>
+            
+            <div class="card mb-6">
+                <h3 style="color: var(--accent-cyan); font-size: 18px; margin-bottom: 12px;">Compliance Score</h3>
+                <div class="compliance-bar">
+                    <div class="compliance-bar-fill" id="complianceBar" style="width: 60%;">60%</div>
+                </div>
+            </div>
+            
+            <div id="frameworkControls" class="card mb-6">
+                <h3 style="color: var(--accent-green); font-size: 16px; margin-bottom: 16px;">CIS Controls v8 - Governance, Risk Management & Compliance</h3>
+                
+                <div style="margin-bottom: 24px;">
+                    <h4 style="color: var(--accent-cyan); font-size: 14px; margin-bottom: 12px;">Control 1: Establish and Maintain Detailed Asset Inventory</h4>
+                    <div class="flex items-start gap-3 mb-3">
+                        <select class="input-field" style="width: 150px;" onchange="updateComplianceScore()">
+                            <option value="not">Not Implemented</option>
+                            <option value="partial" selected>Partial</option>
+                            <option value="implemented">Implemented</option>
+                        </select>
+                        <textarea class="input-field flex-1" placeholder="Evidence notes..." style="height: 80px;"></textarea>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 24px;">
+                    <h4 style="color: var(--accent-cyan); font-size: 14px; margin-bottom: 12px;">Control 2: Address Unauthorized Software</h4>
+                    <div class="flex items-start gap-3 mb-3">
+                        <select class="input-field" style="width: 150px;" onchange="updateComplianceScore()">
+                            <option value="not">Not Implemented</option>
+                            <option value="partial">Partial</option>
+                            <option value="implemented" selected>Implemented</option>
+                        </select>
+                        <textarea class="input-field flex-1" placeholder="Evidence notes..." style="height: 80px;"></textarea>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 24px;">
+                    <h4 style="color: var(--accent-cyan); font-size: 14px; margin-bottom: 12px;">Control 3: Address Unauthorized Hardware</h4>
+                    <div class="flex items-start gap-3 mb-3">
+                        <select class="input-field" style="width: 150px;" onchange="updateComplianceScore()">
+                            <option value="not">Not Implemented</option>
+                            <option value="partial">Partial</option>
+                            <option value="implemented" selected>Implemented</option>
+                        </select>
+                        <textarea class="input-field flex-1" placeholder="Evidence notes..." style="height: 80px;"></textarea>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 24px;">
+                    <h4 style="color: var(--accent-cyan); font-size: 14px; margin-bottom: 12px;">Control 4: Secure Configuration Management</h4>
+                    <div class="flex items-start gap-3 mb-3">
+                        <select class="input-field" style="width: 150px;" onchange="updateComplianceScore()">
+                            <option value="not" selected>Not Implemented</option>
+                            <option value="partial">Partial</option>
+                            <option value="implemented">Implemented</option>
+                        </select>
+                        <textarea class="input-field flex-1" placeholder="Evidence notes..." style="height: 80px;"></textarea>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 24px;">
+                    <h4 style="color: var(--accent-cyan); font-size: 14px; margin-bottom: 12px;">Control 5: Access Control Management</h4>
+                    <div class="flex items-start gap-3 mb-3">
+                        <select class="input-field" style="width: 150px;" onchange="updateComplianceScore()">
+                            <option value="not">Not Implemented</option>
+                            <option value="partial" selected>Partial</option>
+                            <option value="implemented">Implemented</option>
+                        </select>
+                        <textarea class="input-field flex-1" placeholder="Evidence notes..." style="height: 80px;"></textarea>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Compliance Gap Analysis -->
+            <div class="card mb-6">
+                <h3 style="color: var(--accent-cyan); font-size: 18px; margin-bottom: 12px;">Compliance Gap Analysis</h3>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Control</th>
+                                <th>Status</th>
+                                <th>Remediation Steps</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Secure Configuration Management</td>
+                                <td><span class="badge badge-critical">NOT IMPLEMENTED</span></td>
+                                <td>Develop baseline security configurations for all systems; implement configuration management tools; establish change control process</td>
+                            </tr>
+                            <tr>
+                                <td>Establish and Maintain Detailed Asset Inventory</td>
+                                <td><span class="badge badge-high">PARTIAL</span></td>
+                                <td>Expand asset inventory to include all network devices; implement automated discovery tools; establish quarterly review process</td>
+                            </tr>
+                            <tr>
+                                <td>Access Control Management</td>
+                                <td><span class="badge badge-high">PARTIAL</span></td>
+                                <td>Implement role-based access control (RBAC); enforce principle of least privilege; conduct quarterly access reviews</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Compliance Radar Chart -->
+            <div class="card">
+                <h3 style="color: var(--accent-cyan); font-size: 18px; margin-bottom: 12px;">Compliance Coverage by Category</h3>
+                <div class="chart-container">
+                    <canvas id="complianceRadar"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <!-- TAB 5: REPORT GENERATOR -->
+        <div id="report" class="tab-content">
+            <!-- Audit Metadata -->
+            <div class="card mb-6">
+                <h3 style="color: var(--accent-cyan); font-size: 18px; margin-bottom: 16px;">Audit Metadata</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <input type="text" id="orgName" class="input-field" placeholder="Organization Name" value="AcmeCorp Financial Services">
+                    <input type="text" id="auditorName" class="input-field" placeholder="Auditor Name" value="Security Audit Team">
+                    <input type="date" id="auditStartDate" class="input-field" value="2024-05-01">
+                    <input type="date" id="auditEndDate" class="input-field" value="2024-05-31">
+                    <select id="classification" class="input-field">
+                        <option value="Confidential" selected>Confidential</option>
+                        <option value="Internal">Internal</option>
+                        <option value="Public">Public</option>
+                    </select>
+                </div>
+                <textarea id="executiveSummary" class="input-field w-full" placeholder="Executive Summary" style="height: 120px;">This comprehensive security audit was conducted to assess the current security posture of AcmeCorp Financial Services. The assessment covered network infrastructure, web applications, and compliance with industry standards. Key findings include critical vulnerabilities in remote access systems, weak encryption configurations, and gaps in access control management. Immediate remediation is recommended for all critical and high-severity findings.</textarea>
+            </div>
+            
+            <!-- Risk Matrix -->
+            <div class="card mb-6">
+                <h3 style="color: var(--accent-cyan); font-size: 18px; margin-bottom: 16px;">Risk Matrix (Likelihood vs Impact)</h3>
+                <div style="display: grid; grid-template-columns: 60px 1fr; gap: 16px;">
+                    <div style="display: flex; align-items: flex-end; height: 300px;">
+                        <div style="writing-mode: vertical-rl; transform: rotate(180deg); color: var(--info-grey); font-size: 12px; font-weight: 600;">IMPACT</div>
+                    </div>
+                    <div>
+                        <div class="risk-matrix" id="riskMatrix">
+                            <div class="risk-cell risk-1-1">1,1</div>
+                            <div class="risk-cell risk-1-2">1,2</div>
+                            <div class="risk-cell risk-1-3">1,3</div>
+                            <div class="risk-cell risk-1-4">1,4</div>
+                            <div class="risk-cell risk-1-5">1,5</div>
+                            
+                            <div class="risk-cell risk-2-1">2,1</div>
+                            <div class="risk-cell risk-2-2">2,2</div>
+                            <div class="risk-cell risk-2-3">2,3</div>
+                            <div class="risk-cell risk-2-4">2,4</div>
+                            <div class="risk-cell risk-2-5">2,5</div>
+                            
+                            <div class="risk-cell risk-3-1">3,1</div>
+                            <div class="risk-cell risk-3-2">3,2</div>
+                            <div class="risk-cell risk-3-3">3,3</div>
+                            <div class="risk-cell risk-3-4">3,4</div>
+                            <div class="risk-cell risk-3-5">3,5</div>
+                            
+                            <div class="risk-cell risk-4-1">4,1</div>
+                            <div class="risk-cell risk-4-2">4,2</div>
+                            <div class="risk-cell risk-4-3">4,3</div>
+                            <div class="risk-cell risk-4-4">4,4</div>
+                            <div class="risk-cell risk-4-5">4,5</div>
+                            
+                            <div class="risk-cell risk-5-1">5,1</div>
+                            <div class="risk-cell risk-5-2">5,2</div>
+                            <div class="risk-cell risk-5-3">5,3</div>
+                            <div class="risk-cell risk-5-4">5,4</div>
+                            <div class="risk-cell risk-5-5">5,5</div>
+                        </div>
+                        <div style="margin-top: 16px; text-align: center; color: var(--info-grey); font-size: 12px; font-weight: 600;">LIKELIHOOD →</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Report Preview -->
+            <div class="card mb-6">
+                <h3 style="color: var(--accent-cyan); font-size: 18px; margin-bottom: 16px;">Report Preview</h3>
+                <div class="report-preview" id="reportPreview">
+                    <div style="text-align: center; margin-bottom: 32px; border-bottom: 2px solid var(--border-color); padding-bottom: 16px;">
+                        <h1 style="color: var(--accent-cyan); font-size: 28px; margin: 0 0 8px 0;">CYBERSECURITY AUDIT REPORT</h1>
+                        <p style="color: var(--info-grey); margin: 0;">AcmeCorp Financial Services</p>
+                    </div>
+                    
+                    <div class="report-section">
+                        <h3>Executive Summary</h3>
+                        <p id="reportExecSummary">This comprehensive security audit was conducted to assess the current security posture of AcmeCorp Financial Services. The assessment covered network infrastructure, web applications, and compliance with industry standards. Key findings include critical vulnerabilities in remote access systems, weak encryption configurations, and gaps in access control management. Immediate remediation is recommended for all critical and high-severity findings.</p>
+                    </div>
+                    
+                    <div class="report-section">
+                        <h3>Audit Scope & Methodology</h3>
+                        <h4>Organization:</h4>
+                        <p id="reportOrg">AcmeCorp Financial Services</p>
+                        <h4>Audit Period:</h4>
+                        <p id="reportDateRange">May 1, 2024 - May 31, 2024</p>
+                        <h4>Auditor:</h4>
+                        <p id="reportAuditor">Security Audit Team</p>
+                        <h4>Classification:</h4>
+                        <p id="reportClass">Confidential</p>
+                    </div>
+                    
+                    <div class="report-section">
+                        <h3>Key Findings Summary</h3>
+                        <h4>Network Security Assessment Score:</h4>
+                        <p id="reportNetScore">40%</p>
+                        <h4>Penetration Testing Findings:</h4>
+                        <p id="reportPentestSummary">Critical: 1 | High: 2 | Medium: 3 | Low: 1</p>
+                        <h4>Compliance Status:</h4>
+                        <p id="reportCompliance">CIS Controls v8 - 60% Compliant</p>
+                    </div>
+                    
+                    <div class="report-section">
+                        <h3>Critical Findings</h3>
+                        <p style="color: var(--critical-red); font-weight: 600;">⚠️ Unpatched RDP Service (CVSS 9.8)</p>
+                        <p style="margin-top: 8px;">Remote Desktop Protocol service running on 192.168.1.10 contains unpatched vulnerabilities allowing remote code execution. Immediate patching required.</p>
+                    </div>
+                    
+                    <div class="report-section">
+                        <h3>Recommendations</h3>
+                        <ol style="margin-left: 20px; color: #e6edf3;">
+                            <li style="margin-bottom: 8px;">Apply critical security patches to all systems within 24 hours</li>
+                            <li style="margin-bottom: 8px;">Implement multi-factor authentication for remote access</li>
+                            <li style="margin-bottom: 8px;">Conduct comprehensive network segmentation review</li>
+                            <li style="margin-bottom: 8px;">Establish security baseline configurations for all assets</li>
+                            <li style="margin-bottom: 8px;">Implement continuous vulnerability scanning and monitoring</li>
+                        </ol>
+                    </div>
+                    
+                    <div class="report-section" style="border-bottom: none;">
+                        <h3>Report Generated</h3>
+                        <p id="reportGenDate">May 23, 2024</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <button class="btn-primary" onclick="downloadReport()">📥 Download Report (PDF)</button>
+                <button class="btn-secondary" onclick="window.print()" style="margin-left: 12px;">🖨️ Print Report</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Export Modal -->
+    <div id="exportModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Pentest Findings Report</h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div id="exportContent" style="color: #e6edf3; line-height: 1.8; font-size: 13px;"></div>
+            <div style="margin-top: 20px; display: flex; gap: 12px;">
+                <button class="btn-primary" onclick="copyToClipboard()">📋 Copy to Clipboard</button>
+                <button class="btn-secondary" onclick="closeModal()">Close</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // ============================================
+        // DATA STORAGE & INITIALIZATION
+        // ============================================
+        let appData = {
+            assets: [
+                { ip: '192.168.1.10', hostname: 'fw-core-01', os: 'Palo Alto OS', type: 'Firewall', criticality: 5 },
+                { ip: '192.168.1.20', hostname: 'web-server-01', os: 'Ubuntu 22.04 LTS', type: 'Server', criticality: 4 },
+                { ip: '192.168.1.30', hostname: 'db-primary-01', os: 'Windows Server 2019', type: 'Server', criticality: 4 },
+                { ip: '192.168.1.1', hostname: 'core-switch-01', os: 'Cisco IOS', type: 'Switch', criticality: 3 },
+                { ip: '192.168.2.50', hostname: 'workstation-01', os: 'Windows 10', type: 'Endpoint', criticality: 2 }
+            ],
+            pentestFindings: [
+                { title: 'Unpatched RDP Service', host: '192.168.1.10', cve: 'CVE-2023-21889', cvss: 9.8, vector: 'Network', description: 'RDP service vulnerable to RCE', poc: 'Confirmed remote code execution', remediation: 'Apply patch KB5023773' },
+                { title: 'SQL Injection in Login Form', host: 'app.acmecorp.local', cve: '', cvss: 8.6, vector: 'Network', description: 'SQL injection in login form', poc: 'Union-based SQL injection confirmed', remediation: 'Implement parameterized queries' },
+                { title: 'Weak SSH Configuration', host: 'web-server-01', cve: '', cvss: 5.3, vector: 'Network', description: 'SSH allows weak algorithms', poc: 'Connected using weak ciphers', remediation: 'Disable weak SSH algorithms' },
+                { title: 'Default Credentials on Admin Panel', host: 'fw-core-01', cve: '', cvss: 2.1, vector: 'Adjacent', description: 'Admin panel uses default credentials', poc: 'Logged in with default admin/admin', remediation: 'Change default credentials' }
+            ],
+            complianceControls: {
+                CIS: [
+                    { name: 'Establish and Maintain Detailed Asset Inventory', status: 'partial' },
+                    { name: 'Address Unauthorized Software', status: 'implemented' },
+                    { name: 'Address Unauthorized Hardware', status: 'implemented' },
+                    { name: 'Secure Configuration Management', status: 'not' },
+                    { name: 'Access Control Management', status: 'partial' }
+                ]
+            }
+        };
+        
+        // Load from localStorage if available
+        function loadData() {
+            const saved = localStorage.getItem('cyberAuditData');
+            if (saved) {
+                appData = JSON.parse(saved);
+            }
+        }
+        
+        // Save to localStorage
+        function saveData() {
+            localStorage.setItem('cyberAuditData', JSON.stringify(appData));
+        }
+        
+        // Initialize on load
+        window.addEventListener('load', function() {
+            loadData();
+            initializeCharts();
+            updateDashboard();
+        });
+        
+        // ============================================
+        // TAB NAVIGATION
+        // ============================================
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+            
+            // Update dashboard if switching to dashboard
+            if (tabName === 'dashboard') {
+                updateDashboard();
+            }
+        }
+        
+        // ============================================
+        // DASHBOARD FUNCTIONS
+        // ============================================
+        function updateDashboard() {
+            // Update summary cards
+            document.getElementById('totalAssets').textContent = appData.assets.length;
+            
+            const criticalCount = appData.pentestFindings.filter(f => f.cvss >= 9).length;
+            const highCount = appData.pentestFindings.filter(f => f.cvss >= 7 && f.cvss < 9).length;
+            const mediumCount = appData.pentestFindings.filter(f => f.cvss >= 4 && f.cvss < 7).length;
+            
+            document.getElementById('criticalCount').textContent = criticalCount;
+            document.getElementById('highCount').textContent = highCount;
+            document.getElementById('mediumCount').textContent = mediumCount;
+            
+            // Update threat level
+            let threatLevel = 'LOW';
+            if (criticalCount > 0) threatLevel = 'CRITICAL';
+            else if (highCount > 0) threatLevel = 'HIGH';
+            else if (mediumCount > 0) threatLevel = 'MEDIUM';
+            
+            const badge = document.getElementById('threatLevelBadge');
+            badge.textContent = threatLevel;
+            badge.className = `threat-level ${threatLevel.toLowerCase()}`;
+            
+            // Update charts
+            updateVulnerabilityChart();
+            updateCategoryChart();
+            updateTrendChart();
+        }
+        
+        // ============================================
+        // CHART INITIALIZATION & UPDATES
+        // ============================================
+        let charts = {};
+        
+        function initializeCharts() {
+            // Vulnerability Breakdown Chart
+            const vulnCtx = document.getElementById('vulnerabilityChart');
+            if (vulnCtx) {
+                charts.vulnerability = new Chart(vulnCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Critical', 'High', 'Medium', 'Low', 'Info'],
+                        datasets: [{
+                            data: [1, 2, 3, 1, 2],
+                            backgroundColor: [
+                                'rgba(255, 68, 68, 0.8)',
+                                'rgba(255, 140, 0, 0.8)',
+                                'rgba(255, 215, 0, 0.8)',
+                                'rgba(74, 144, 226, 0.8)',
+                                'rgba(139, 148, 158, 0.8)'
+                            ],
+                            borderColor: '#161b22',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                labels: { color: '#e6edf3', font: { family: "'JetBrains Mono', monospace" } }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // Category Chart
+            const catCtx = document.getElementById('categoryChart');
+            if (catCtx) {
+                charts.category = new Chart(catCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Network', 'Web App', 'Social Eng', 'Physical', 'Wireless'],
+                        datasets: [{
+                            label: 'Findings',
+                            data: [4, 3, 1, 0, 2],
+                            backgroundColor: 'rgba(0, 229, 255, 0.8)',
+                            borderColor: 'rgba(0, 229, 255, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                labels: { color: '#e6edf3', font: { family: "'JetBrains Mono', monospace" } }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                ticks: { color: '#e6edf3' },
+                                grid: { color: 'rgba(48, 54, 61, 0.3)' }
+                            },
+                            x: {
+                                ticks: { color: '#e6edf3' },
+                                grid: { color: 'rgba(48, 54, 61, 0.3)' }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // Trend Chart
+            const trendCtx = document.getElementById('trendChart');
+            if (trendCtx) {
+                charts.trend = new Chart(trendCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Cycle 1', 'Cycle 2', 'Cycle 3', 'Cycle 4', 'Cycle 5', 'Cycle 6'],
+                        datasets: [{
+                            label: 'Risk Score',
+                            data: [75, 72, 68, 65, 62, 58],
+                            borderColor: 'rgba(57, 255, 20, 1)',
+                            backgroundColor: 'rgba(57, 255, 20, 0.1)',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                labels: { color: '#e6edf3', font: { family: "'JetBrains Mono', monospace" } }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                ticks: { color: '#e6edf3' },
+                                grid: { color: 'rgba(48, 54, 61, 0.3)' }
+                            },
+                            x: {
+                                ticks: { color: '#e6edf3' },
+                                grid: { color: 'rgba(48, 54, 61, 0.3)' }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // CVSS Chart
+            const cvssCtx = document.getElementById('cvssChart');
+            if (cvssCtx) {
+                charts.cvss = new Chart(cvssCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['0-3.9 (Low)', '4-6.9 (Medium)', '7-8.9 (High)', '9-10 (Critical)'],
+                        datasets: [{
+                            label: 'Number of Findings',
+                            data: [1, 3, 2, 1],
+                            backgroundColor: ['rgba(74, 144, 226, 0.8)', 'rgba(255, 215, 0, 0.8)', 'rgba(255, 140, 0, 0.8)', 'rgba(255, 68, 68, 0.8)'],
+                            borderColor: ['#4a90e2', '#ffd700', '#ff8c00', '#ff4444'],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                labels: { color: '#e6edf3', font: { family: "'JetBrains Mono', monospace" } }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                ticks: { color: '#e6edf3' },
+                                grid: { color: 'rgba(48, 54, 61, 0.3)' }
+                            },
+                            y: {
+                                ticks: { color: '#e6edf3' }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // Compliance Radar Chart
+            const radarCtx = document.getElementById('complianceRadar');
+            if (radarCtx) {
+                charts.compliance = new Chart(radarCtx, {
+                    type: 'radar',
+                    data: {
+                        labels: ['Asset Management', 'Software Control', 'Hardware Control', 'Configuration', 'Access Control'],
+                        datasets: [{
+                            label: 'Compliance %',
+                            data: [60, 100, 100, 20, 60],
+                            borderColor: 'rgba(0, 229, 255, 1)',
+                            backgroundColor: 'rgba(0, 229, 255, 0.2)',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                labels: { color: '#e6edf3', font: { family: "'JetBrains Mono', monospace" } }
+                            }
+                        },
+                        scales: {
+                            r: {
+                                ticks: { color: '#e6edf3' },
+                                grid: { color: 'rgba(48, 54, 61, 0.3)' }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+        
+        function updateVulnerabilityChart() {
+            if (charts.vulnerability) {
+                const critical = appData.pentestFindings.filter(f => f.cvss >= 9).length;
+                const high = appData.pentestFindings.filter(f => f.cvss >= 7 && f.cvss < 9).length;
+                const medium = appData.pentestFindings.filter(f => f.cvss >= 4 && f.cvss < 7).length;
+                const low = appData.pentestFindings.filter(f => f.cvss >= 0 && f.cvss < 4).length;
+                
+                charts.vulnerability.data.datasets[0].data = [critical, high, medium, low, 2];
+                charts.vulnerability.update();
+            }
+        }
+        
+        function updateCategoryChart() {
+            if (charts.category) {
+                charts.category.update();
+            }
+        }
+        
+        function updateTrendChart() {
+            if (charts.trend) {
+                charts.trend.update();
+            }
+        }
+        
+        // ============================================
+        // NETWORK SECURITY FUNCTIONS
+        // ============================================
+        function addNetworkAsset() {
+            const ip = document.getElementById('assetIP').value;
+            const hostname = document.getElementById('assetHostname').value;
+            const os = document.getElementById('assetOS').value;
+            const type = document.getElementById('assetType').value;
+            const criticality = document.getElementById('assetCriticality').value;
+            
+            if (!ip || !hostname || !os || !type || !criticality) {
+                alert('Please fill in all fields');
+                return;
+            }
+            
+            appData.assets.push({ ip, hostname, os, type, criticality: parseInt(criticality) });
+            saveData();
+            
+            // Clear form
+            document.getElementById('assetIP').value = '';
+            document.getElementById('assetHostname').value = '';
+            document.getElementById('assetOS').value = '';
+            document.getElementById('assetType').value = '';
+            document.getElementById('assetCriticality').value = '';
+            
+            renderAssetTable();
+            updateDashboard();
+        }
+        
+        function deleteAsset(index) {
+            appData.assets.splice(index, 1);
+            saveData();
+            renderAssetTable();
+            updateDashboard();
+        }
+        
+        function renderAssetTable() {
+            const tbody = document.getElementById('assetTable');
+            tbody.innerHTML = '';
+            
+            appData.assets.forEach((asset, index) => {
+                const row = document.createElement('tr');
+                const critBadge = asset.criticality >= 4 ? 'badge-critical' : asset.criticality === 3 ? 'badge-high' : 'badge-medium';
+                row.innerHTML = `
+                    <td>${asset.ip}</td>
+                    <td>${asset.hostname}</td>
+                    <td>${asset.os}</td>
+                    <td>${asset.type}</td>
+                    <td><span class="badge ${critBadge}">${asset.criticality}</span></td>
+                    <td><button class="btn-danger" onclick="deleteAsset(${index})">Delete</button></td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
+        function simulatePortScan() {
+            const ip = document.getElementById('scanIP').value;
+            if (!ip) {
+                alert('Please enter an IP address');
+                return;
+            }
+            
+            const output = document.getElementById('portScanOutput');
+            output.style.display = 'block';
+            output.innerHTML = '';
+            
+            const ports = [
+                { port: 22, service: 'SSH', risk: 'Medium' },
+                { port: 80, service: 'HTTP', risk: 'High' },
+                { port: 443, service: 'HTTPS', risk: 'Low' },
+                { port: 3389, service: 'RDP', risk: 'Critical' },
+                { port: 445, service: 'SMB', risk: 'Critical' },
+                { port: 21, service: 'FTP', risk: 'High' },
+                { port: 25, service: 'SMTP', risk: 'Medium' },
+                { port: 53, service: 'DNS', risk: 'Low' }
+            ];
+            
+            let html = `<div class="terminal-line"><span class="terminal-prompt">$</span> nmap -sV -sC ${ip}</div>`;
+            html += `<div class="terminal-line">Starting Nmap scan...</div>`;
+            html += `<div class="terminal-line">Nmap scan report for ${ip}</div>`;
+            html += `<div class="terminal-line">PORT     STATE SERVICE     VERSION</div>`;
+            
+            ports.forEach(p => {
+                html += `<div class="terminal-line">${String(p.port).padEnd(8)} open  ${p.service.padEnd(11)} [${p.risk}]</div>`;
+            });
+            
+            html += `<div class="terminal-line">Nmap done at scan completion</div>`;
+            output.innerHTML = html;
+        }
+        
+        function updateNetworkScore() {
+            const checkboxes = document.querySelectorAll('#firewallChecklist input, #segmentationChecklist input, #wirelessChecklist input, #dnsChecklist input, #vpnChecklist input');
+            const checked = Array.from(checkboxes).filter(cb => cb.checked).length;
+            const total = checkboxes.length;
+            const percentage = Math.round((checked / total) * 100);
+            
+            const bar = document.getElementById('networkScoreBar');
+            bar.style.width = percentage + '%';
+            bar.textContent = percentage + '%';
+        }
+        
+        // ============================================
+        // PENETRATION TESTING FUNCTIONS
+        // ============================================
+        function updateCVSSSeverity() {
+            const cvss = parseFloat(document.getElementById('cvssScore').value);
+            document.getElementById('cvssValue').textContent = cvss.toFixed(1);
+            
+            let severity = 'INFO';
+            let badgeClass = 'badge-info';
+            
+            if (cvss >= 9) {
+                severity = 'CRITICAL';
+                badgeClass = 'badge-critical';
+            } else if (cvss >= 7) {
+                severity = 'HIGH';
+                badgeClass = 'badge-high';
+            } else if (cvss >= 4) {
+                severity = 'MEDIUM';
+                badgeClass = 'badge-medium';
+            } else {
+                severity = 'LOW';
+                badgeClass = 'badge-low';
+            }
+            
+            const badge = document.getElementById('severityBadge');
+            badge.textContent = severity;
+            badge.className = `badge ${badgeClass}`;
+        }
+        
+        function addPentestFinding() {
+            const title = document.getElementById('findingTitle').value;
+            const host = document.getElementById('findingHost').value;
+            const cve = document.getElementById('cveID').value;
+            const cvss = parseFloat(document.getElementById('cvssScore').value);
+            const vector = document.getElementById('attackVector').value;
+            const description = document.getElementById('findingDescription').value;
+            const poc = document.getElementById('findingPOC').value;
+            const remediation = document.getElementById('findingRemediation').value;
+            
+            if (!title || !host || !vector || !description) {
+                alert('Please fill in required fields');
+                return;
+            }
+            
+            appData.pentestFindings.push({ title, host, cve, cvss, vector, description, poc, remediation });
+            saveData();
+            
+            // Clear form
+            document.getElementById('findingTitle').value = '';
+            document.getElementById('findingHost').value = '';
+            document.getElementById('cveID').value = '';
+            document.getElementById('cvssScore').value = '5.0';
+            document.getElementById('attackVector').value = '';
+            document.getElementById('findingDescription').value = '';
+            document.getElementById('findingPOC').value = '';
+            document.getElementById('findingRemediation').value = '';
+            updateCVSSSeverity();
+            
+            renderPentestTable();
+            updateVulnerabilityChart();
+            updateDashboard();
+        }
+        
+        function deletePentestFinding(index) {
+            appData.pentestFindings.splice(index, 1);
+            saveData();
+            renderPentestTable();
+            updateVulnerabilityChart();
+            updateDashboard();
+        }
+        
+        function renderPentestTable() {
+            const tbody = document.getElementById('pentestFindingsTable');
+            tbody.innerHTML = '';
+            
+            appData.pentestFindings.forEach((finding, index) => {
+                const row = document.createElement('tr');
+                let badgeClass = 'badge-info';
+                let severity = 'INFO';
+                
+                if (finding.cvss >= 9) {
+                    badgeClass = 'badge-critical';
+                    severity = 'CRITICAL';
+                } else if (finding.cvss >= 7) {
+                    badgeClass = 'badge-high';
+                    severity = 'HIGH';
+                } else if (finding.cvss >= 4) {
+                    badgeClass = 'badge-medium';
+                    severity = 'MEDIUM';
+                } else {
+                    badgeClass = 'badge-low';
+                    severity = 'LOW';
+                }
+                
+                row.innerHTML = `
+                    <td>${finding.title}</td>
+                    <td>${finding.host}</td>
+                    <td>${finding.cvss.toFixed(1)}</td>
+                    <td><span class="badge ${badgeClass}">${severity}</span></td>
+                    <td>${finding.vector}</td>
+                    <td><button class="btn-danger" onclick="deletePentestFinding(${index})">Delete</button></td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
+        function exportPentestReport() {
+            let report = 'PENETRATION TESTING FINDINGS REPORT\n';
+            report += '=' .repeat(50) + '\n\n';
+            
+            appData.pentestFindings.forEach((finding, index) => {
+                report += `Finding #${index + 1}: ${finding.title}\n`;
+                report += `Host/URL: ${finding.host}\n`;
+                report += `CVSS Score: ${finding.cvss.toFixed(1)}\n`;
+                report += `Attack Vector: ${finding.vector}\n`;
+                if (finding.cve) report += `CVE ID: ${finding.cve}\n`;
+                report += `Description: ${finding.description}\n`;
+                report += `Proof of Concept: ${finding.poc}\n`;
+                report += `Remediation: ${finding.remediation}\n`;
+                report += '-'.repeat(50) + '\n\n';
+            });
+            
+            document.getElementById('exportContent').textContent = report;
+            document.getElementById('exportModal').classList.add('show');
+        }
+        
+        function copyToClipboard() {
+            const content = document.getElementById('exportContent').textContent;
+            navigator.clipboard.writeText(content).then(() => {
+                alert('Report copied to clipboard!');
+            });
+        }
+        
+        function closeModal() {
+            document.getElementById('exportModal').classList.remove('show');
+        }
+        
+        // ============================================
+        // COMPLIANCE FUNCTIONS
+        // ============================================
+        function loadFramework(framework) {
+            // Update button states
+            document.querySelectorAll('.card button').forEach(btn => {
+                if (btn.textContent.includes(framework)) {
+                    btn.classList.remove('btn-secondary');
+                    btn.classList.add('btn-primary');
+                } else if (btn.textContent.includes('CIS') || btn.textContent.includes('NIST') || btn.textContent.includes('ISO') || btn.textContent.includes('PCI') || btn.textContent.includes('HIPAA')) {
+                    btn.classList.remove('btn-primary');
+                    btn.classList.add('btn-secondary');
+                }
+            });
+            
+            // Update framework display
+            const frameworkNames = {
+                'CIS': 'CIS Controls v8 - Governance, Risk Management & Compliance',
+                'NIST': 'NIST Cybersecurity Framework - Core Functions',
+                'ISO': 'ISO 27001 - Information Security Management',
+                'PCI': 'PCI-DSS - Payment Card Industry Data Security Standard',
+                'HIPAA': 'HIPAA - Health Insurance Portability and Accountability Act'
+            };
+            
+            const heading = document.querySelector('#frameworkControls h3');
+            if (heading) heading.textContent = frameworkNames[framework];
+        }
+        
+        function updateComplianceScore() {
+            const selects = document.querySelectorAll('#frameworkControls select');
+            let implemented = 0;
+            let partial = 0;
+            let total = selects.length;
+            
+            selects.forEach(select => {
+                if (select.value === 'implemented') implemented++;
+                else if (select.value === 'partial') partial++;
+            });
+            
+            const score = Math.round(((implemented + (partial * 0.5)) / total) * 100);
+            
+            const bar = document.getElementById('complianceBar');
+            bar.style.width = score + '%';
+            bar.textContent = score + '%';
+            
+            document.getElementById('complianceScore').textContent = score + '%';
+        }
+        
+        // ============================================
+        // REPORT GENERATOR FUNCTIONS
+        // ============================================
+        function downloadReport() {
+            const reportContent = document.getElementById('reportPreview').innerHTML;
+            const printWindow = window.open('', '', 'width=800,height=600');
+            printWindow.document.write(`
+                <html>
+                <head>
+                    <title>Cybersecurity Audit Report</title>
+                    <style>
+                        body { background-color: white; color: black; font-family: monospace; }
+                        h1 { color: #0066cc; }
+                        h3 { color: #0066cc; margin-top: 20px; }
+                        p { line-height: 1.6; }
+                        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+                        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+                        th { background-color: #f0f0f0; }
+                    </style>
+                </head>
+                <body>
+                    ${reportContent}
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+            printWindow.print();
+        }
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            renderAssetTable();
+            renderPentestTable();
+            updateNetworkScore();
+            updateComplianceScore();
+            updateCVSSSeverity();
+        });
+    </script>
+</body>
+</html>
